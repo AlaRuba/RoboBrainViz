@@ -5,16 +5,18 @@ var neo4j = require('neo4j');
 var db = new neo4j.GraphDatabase('http://ec2-54-68-208-190.us-west-2.compute.amazonaws.com:7474');
 
 var query = [
-  'MATCH n',
-  'RETURN n',
+  'MATCH (n {handle: {handle} })-[r]->nbr',
+  'RETURN n,r,nbr',
   'LIMIT 10'
 ].join('\n');
 
-var params = {};
+var params = {handle:"Sitting"};
 
 db.query(query, params, function (err, results) {
   if (err) throw err;
-  console.log(results)
+  for (var i=0;i<results.length; i ++) {
+    console.log(results[i].nbr._data.data.handle)
+  }
   var likes = results.map(function (result) {
     return result['other'];
   });
